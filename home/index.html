@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="">
+        <title>Population</title>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> 
+        <script type="text/javascript">
+            $(document).ready(function () {
+                  var states = [];
+                    codeAddress();
+            });
+
+            async function codeAddress() {
+                const response = await fetch('/api/states'); 
+                states = await response.json();
+               // console.log(states);
+                var select = document.getElementById("states");
+                
+                for(index in states) {
+                 //  console.log('states => ', states[index].Year)
+                    select.options[select.options.length] = new Option(states[index].Year, states[index].Year);
+                }
+            }
+
+            
+              function getyearDetails(){
+
+                //console.log('states => ', states)
+                var getvalues  = document.getElementById("states").value;
+                var getarrayvalue = states.filter(x => x.Year == getvalues );
+                //console.log(getarrayvalue);
+
+                // EXTRACT VALUE FOR HTML HEADER. 
+                    // ('Book ID', 'Book Name', 'Category' and 'Price')
+                    var col = [];
+                    for (var i = 0; i < getarrayvalue.length; i++) {
+                        for (var key in getarrayvalue[i]) {
+                            if (col.indexOf(key) === -1) {
+                                col.push(key);
+                            }
+                        }
+                    }
+
+
+                     // CREATE DYNAMIC TABLE.
+                    var table = document.createElement("table");
+                    table.className = 'addContainer';
+                    // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
+
+                    var tr = table.insertRow(-1);                   // TABLE ROW.
+
+                    for (var i = 0; i < col.length; i++) {
+                        var th = document.createElement("th");      // TABLE HEADER.
+                        th.innerHTML = col[i];
+                        tr.appendChild(th);
+                    }
+
+                    // ADD JSON DATA TO THE TABLE AS ROWS.
+                    for (var i = 0; i < getarrayvalue.length; i++) {
+
+                        tr = table.insertRow(-1);
+
+                        for (var j = 0; j < col.length; j++) {
+                            var tabCell = tr.insertCell(-1);
+                            tabCell.innerHTML = getarrayvalue[i][col[j]];
+                        }
+                    }
+
+                    // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+                    var divContainer = document.getElementById("showData");
+                    divContainer.innerHTML = "";
+                    divContainer.appendChild(table);
+
+                //alert(getvalues);
+            }
+        </script>
+    </head>
+    <style>
+        /* body {
+        font-family: sans-serif;
+        padding-top: 1em;
+        padding-bottom: 1em;
+        font-size: 2em;
+        width: 80%;
+        margin: 0 auto;
+        }
+        input, textarea, button, p, div, section, article, select {
+        /* display: 'flex'; */
+        /* width: 100%;
+        font-family: sans-serif;
+        font-size: 1em;
+        margin: 0.5em;
+        }
+        th, td, p, input {
+                    font:14px Verdana;
+                }
+                table, th, td 
+                {
+                    border: solid 1px #DDD;
+                    border-collapse: collapse;
+                    padding: 2px 3px;
+                    text-align: center;
+                }
+                th {
+                    font-weight:bold;
+                } */ 
+                .addContainer{
+                    /* color: #dd0000; */
+                    /* background-color:#ffd700; */
+                    margin-top: 20px;
+                }
+                td, th {
+                    padding: 5px;
+                    text-align: center;
+                }
+              
+    </style>
+    <body>
+       <div class="container">
+        <h2>Slelect US population</h2>
+        <script src="app.js"></script>
+       <select onchange="getyearDetails()" id ="states"></select>
+       <p id="showData"></p>
+       </div>
+    </body>
+    
+</html>
